@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.rohit.recycleractivity.databinding.ActivityLayoutBinding
 import com.rohit.recycleractivity.databinding.ActivityMainBinding
 import com.rohit.recycleractivity.databinding.EditlayoutBinding
@@ -12,6 +14,7 @@ import com.rohit.recycleractivity.databinding.EditlayoutBinding
 class MainActivity : AppCompatActivity(),ClickInterface{
     lateinit var binding:ActivityMainBinding
     lateinit var studentAdapter: StudentAdapter
+    val db = Firebase.firestore
     var studentList = ArrayList<StudentModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -33,12 +36,9 @@ class MainActivity : AppCompatActivity(),ClickInterface{
                 } else if (dialogBinding.etRollNo.text.isEmpty()) {
                     dialogBinding.etRollNo.error = "Enter RollNo."
                 } else {
-                    studentList.add(
-                        StudentModel(
-                            dialogBinding.etName.text.toString(),
-                            dialogBinding.etRollNo.text.toString()
-                        )
-                    )
+                    val studentModel =StudentModel(dialogBinding.etName.text.toString(),dialogBinding.etRollNo.text.toString())
+                    db.collection("Users")
+                        .add(studentModel)
                     dialog.dismiss()
                     studentAdapter.notifyDataSetChanged()
                 }
